@@ -103,6 +103,8 @@ module Grape
 
         verb, method_object = method_object(route, options, path)
 
+        next if @paths.dig(path.to_s, verb)
+
         if @paths.key?(path.to_s)
           @paths[path.to_s][verb] = method_object
         else
@@ -387,7 +389,7 @@ module Grape
       return param unless stackable_values
       return params unless stackable_values.is_a? Grape::Util::StackableValues
 
-      stackable_values&.new_values&.dig(:namespace)&.each do |namespace|
+      stackable_values.new_values&.dig(:namespace)&.each do |namespace|
         space = namespace.space.to_s.gsub(':', '')
         params[space] = namespace.options || {}
       end
